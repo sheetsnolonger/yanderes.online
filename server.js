@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || "deso;fjuh23-0r83",
+  secret: process.env.SESSION_SECRET || "change-this-secret",
   resave: false,
   saveUninitialized: false
 }));
@@ -48,19 +48,12 @@ function clean(value) {
   return String(value || "").trim();
 }
 
-async function deleteExpiredPosts() {
-  const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-  await pool.query(
-    "DELETE FROM posts WHERE pinned = FALSE AND created_at < $1",
-    [weekAgo]
-  );
-}
-
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM posts ORDER BY pinned DESC, created_at DESC"
     );
+
     res.render("index", { posts: result.rows });
   } catch (err) {
     console.error(err);
@@ -88,6 +81,7 @@ app.post("/submit", async (req, res) => {
       "INSERT INTO posts (title, content, tag, created_at) VALUES ($1, $2, $3, $4)",
       [title, content, tag, Date.now()]
     );
+
     res.redirect("/");
   } catch (err) {
     console.error(err);
@@ -124,6 +118,7 @@ app.get("/admin", async (req, res) => {
     const result = await pool.query(
       "SELECT * FROM posts ORDER BY pinned DESC, created_at DESC"
     );
+
     res.render("admin", { posts: result.rows });
   } catch (err) {
     console.error(err);
@@ -164,6 +159,7 @@ app.post("/pin/:id", requireAdmin, async (req, res) => {
       "UPDATE posts SET pinned = NOT pinned WHERE id = $1",
       [req.params.id]
     );
+
     res.redirect("/admin");
   } catch (err) {
     console.error(err);
@@ -172,15 +168,12 @@ app.post("/pin/:id", requireAdmin, async (req, res) => {
 });
 
 initDb()
-  .then(() => deleteExpiredPosts())
   .then(() => {
-    setInterval(deleteExpiredPosts, 60 * 60 * 1000);
-
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`running on ${PORT}`);
     });
   })
   .catch(err => {
-    console.error("failed to start app:", err);
+    console.error("failed to start:", err);
     process.exit(1);
   });

@@ -1,35 +1,43 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
+const { Pool } = require("pg");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const path = require("path");
 
 const app = express();
-const db = new sqlite3.Database("./db.sqlite");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASS = process.env.ADMIN_PASS || "tiqzug-7rumvA-rymjuw";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production"
+    ? { rejectUnauthorized: false }
+    : false
+});
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(session({
-  secret: "yandere-secret",
+  secret: process.env.SESSION_SECRET || "yandere-secret-change-this",
   resave: false,
   saveUninitialized: false
 }));
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS posts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    content TEXT NOT NULL,
-    tag TEXT,
-    pinned INTEGER DEFAULT 0,
-    created_at INTEGER NOT NULL
-  )`);
-});
+async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS posts (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      tag TEXT,
+      pinned BOOLEAN DEFAULT FALSE,
+      created_at BIGINT NOT NULL
+    )
+  `);
+}
 
 function requireAdmin(req, res, next) {
   if (!req.session.auth) return res.redirect("/admin");
@@ -40,26 +48,31 @@ function clean(value) {
   return String(value || "").trim();
 }
 
-function deleteExpiredPosts() {
+async function deleteExpiredPosts() {
   const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-  db.run("DELETE FROM posts WHERE pinned = 0 AND created_at < ?", [weekAgo]);
+  await pool.query(
+    "DELETE FROM posts WHERE pinned = FALSE AND created_at < $1",
+    [weekAgo]
+  );
 }
 
-deleteExpiredPosts();
-setInterval(deleteExpiredPosts, 60 * 60 * 1000);
-
-app.get("/", (req, res) => {
-  db.all("SELECT * FROM posts ORDER BY pinned DESC, created_at DESC", (err, posts) => {
-    if (err) return res.status(500).send("database error");
-    res.render("index", { posts });
-  });
+app.get("/", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM posts ORDER BY pinned DESC, created_at DESC"
+    );
+    res.render("index", { posts: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
 });
 
 app.get("/submit", (req, res) => {
   res.render("submit", { error: null });
 });
 
-app.post("/submit", (req, res) => {
+app.post("/submit", async (req, res) => {
   const title = clean(req.body.title);
   const content = clean(req.body.content);
   const tag = clean(req.body.tag) || "untagged";
@@ -70,33 +83,52 @@ app.post("/submit", (req, res) => {
     });
   }
 
-  db.run(
-    "INSERT INTO posts (title, content, tag, created_at) VALUES (?, ?, ?, ?)",
-    [title, content, tag, Date.now()],
-    err => {
-      if (err) return res.status(500).send("database error");
-      res.redirect("/");
-    }
-  );
+  try {
+    await pool.query(
+      "INSERT INTO posts (title, content, tag, created_at) VALUES ($1, $2, $3, $4)",
+      [title, content, tag, Date.now()]
+    );
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
 });
 
-app.get("/post/:id", (req, res) => {
-  db.get("SELECT * FROM posts WHERE id = ?", [req.params.id], (err, post) => {
-    if (err) return res.status(500).send("database error");
-    if (!post) return res.status(404).send("post not found");
-    res.render("post", { post });
-  });
+app.get("/post/:id", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM posts WHERE id = $1",
+      [req.params.id]
+    );
+
+    if (!result.rows.length) return res.status(404).send("post not found");
+
+    res.render("post", { post: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
 });
 
-app.get("/admin", (req, res) => {
+app.get("/tos", (req, res) => {
+  res.render("tos");
+});
+
+app.get("/admin", async (req, res) => {
   if (!req.session.auth) {
     return res.render("login", { error: null });
   }
 
-  db.all("SELECT * FROM posts ORDER BY pinned DESC, created_at DESC", (err, posts) => {
-    if (err) return res.status(500).send("database error");
-    res.render("admin", { posts });
-  });
+  try {
+    const result = await pool.query(
+      "SELECT * FROM posts ORDER BY pinned DESC, created_at DESC"
+    );
+    res.render("admin", { posts: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
 });
 
 app.post("/admin", (req, res) => {
@@ -116,24 +148,39 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.post("/delete/:id", requireAdmin, (req, res) => {
-  db.run("DELETE FROM posts WHERE id = ?", [req.params.id], () => {
+app.post("/delete/:id", requireAdmin, async (req, res) => {
+  try {
+    await pool.query("DELETE FROM posts WHERE id = $1", [req.params.id]);
     res.redirect("/admin");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
+});
+
+app.post("/pin/:id", requireAdmin, async (req, res) => {
+  try {
+    await pool.query(
+      "UPDATE posts SET pinned = NOT pinned WHERE id = $1",
+      [req.params.id]
+    );
+    res.redirect("/admin");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("database error");
+  }
+});
+
+initDb()
+  .then(() => deleteExpiredPosts())
+  .then(() => {
+    setInterval(deleteExpiredPosts, 60 * 60 * 1000);
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`running on ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error("failed to start app:", err);
+    process.exit(1);
   });
-});
-
-app.post("/pin/:id", requireAdmin, (req, res) => {
-  db.run(
-    "UPDATE posts SET pinned = CASE pinned WHEN 1 THEN 0 ELSE 1 END WHERE id = ?",
-    [req.params.id],
-    () => res.redirect("/admin")
-  );
-});
-
-app.get("/tos", (req, res) => {
-  res.render("tos");
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`running on ${PORT}`);
-});

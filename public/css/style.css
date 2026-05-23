@@ -110,14 +110,17 @@ pre {
 
 .corner-img {
   position: fixed;
-  left: 0;
+  left: 18px;
   bottom: 0;
-  width: clamp(110px, 16vw, 220px);
-  height: clamp(110px, 16vw, 220px);
+
+  width: clamp(140px, 19vw, 260px);
+  height: clamp(140px, 19vw, 260px);
+
   background-image: url("https://www.nicepng.com/png/full/356-3568164_oc-edited-mediaarmless-yuri-cause-editing-her-sprites.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: bottom left;
+
   opacity: 0.55;
   pointer-events: none;
   z-index: -1;

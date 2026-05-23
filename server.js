@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || "yandere-secret-change-this",
+  secret: process.env.SESSION_SECRET || "deso;fjuh23-0r83",
   resave: false,
   saveUninitialized: false
 }));

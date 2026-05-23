@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><%= post.title %></title>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/css/style.css">
-
+  <title><%= post.title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
 <div class="shell">
 
-<div class="site-header">
-<div>
-<h1><%= post.title %></h1>
-<p class="tag"><%= post.tag %></p>
-</div>
+  <div class="site-header">
+    <div>
+      <h1><%= post.title %></h1>
+      <p class="tag">
+        <%= post.tag %>
+        <% if (post.pinned) { %>
+          • pinned
+        <% } %>
+      </p>
+    </div>
 
-<nav>
-<a href="/">back</a>
-</nav>
-</div>
+    <nav>
+      <a href="/">archive</a>
+      <a href="/submit">submit</a>
+      <a href="/tos">tos</a>
+    </nav>
+  </div>
 
-<div class="post">
-<pre><%= post.content %></pre>
-</div>
+  <div class="post">
+    <pre><%= post.content %></pre>
+  </div>
 
 </div>
 

@@ -27,8 +27,10 @@ body {
   margin-bottom: 20px;
 }
 
-h1, h2 {
+h1,
+h2 {
   color: #f0d8ff;
+  word-break: break-word;
 }
 
 a {
@@ -53,6 +55,7 @@ form {
 
 .post.pinned {
   border-color: #ff66ff;
+  box-shadow: 0 0 12px rgba(255, 102, 255, 0.22);
 }
 
 .tag {
@@ -83,6 +86,10 @@ button {
   color: white;
 }
 
+button:hover {
+  background: #6c209d;
+}
+
 .admin-actions {
   display: flex;
   gap: 10px;
@@ -91,6 +98,9 @@ button {
 
 .admin-actions form {
   flex: 1 1 140px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 pre {
@@ -107,8 +117,10 @@ pre {
   background-image: url("https://www.nicepng.com/png/full/356-3568164_oc-edited-mediaarmless-yuri-cause-editing-her-sprites.png");
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: bottom left;
   opacity: 0.55;
   pointer-events: none;
+  z-index: -1;
 }
 
 @media (min-width: 900px) {
@@ -117,11 +129,16 @@ pre {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
+
+  .posts .post {
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 700px) {
   body {
     padding: 14px;
+    font-size: 15px;
   }
 
   .site-header {
@@ -132,8 +149,19 @@ pre {
     margin-top: 12px;
   }
 
+  nav a {
+    display: inline-block;
+    padding: 8px 10px;
+    border: 1px solid #4b1470;
+    background: #120022;
+  }
+
   h1 {
     font-size: 26px;
+  }
+
+  textarea {
+    min-height: 210px;
   }
 
   .corner-img {

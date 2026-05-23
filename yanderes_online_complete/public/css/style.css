@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0b0014;
+  color: #d8b7ff;
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 24px;
+}
+
+.shell {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  border-bottom: 1px solid #4b1470;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+h1, h2 {
+  color: #f0d8ff;
+}
+
+a {
+  color: #ff8cff;
+}
+
+nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notice,
+.post,
+.panel,
+form {
+  border: 1px solid #4b1470;
+  background: rgba(26, 0, 46, 0.82);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.post.pinned {
+  border-color: #ff66ff;
+}
+
+.tag {
+  color: #a980d6;
+  font-size: 14px;
+}
+
+input,
+textarea,
+button {
+  width: 100%;
+  font: inherit;
+  background: #120022;
+  color: #ead6ff;
+  border: 1px solid #5f2387;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+textarea {
+  min-height: 240px;
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+  background: #4b1470;
+  color: white;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-actions form {
+  flex: 1 1 140px;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.corner-img {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: clamp(110px, 16vw, 220px);
+  height: clamp(110px, 16vw, 220px);
+  background-image: url("https://www.nicepng.com/png/full/356-3568164_oc-edited-mediaarmless-yuri-cause-editing-her-sprites.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .posts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 14px;
+  }
+
+  .site-header {
+    display: block;
+  }
+
+  nav {
+    margin-top: 12px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .corner-img {
+    opacity: 0.3;
+  }
+}

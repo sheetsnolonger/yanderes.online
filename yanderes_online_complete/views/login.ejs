@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>admin login</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+
+<div class="shell">
+
+<div class="site-header">
+<h1>admin login</h1>
+</div>
+
+<form method="POST">
+
+<% if (error) { %>
+<div class="panel"><%= error %></div>
+<% } %>
+
+<input type="password" name="pass" placeholder="password">
+<button type="submit">enter</button>
+
+</form>
+
+</div>
+
+<div class="corner-img"></div>
+
+</body>
+</html>

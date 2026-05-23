@@ -130,6 +130,10 @@ app.post("/pin/:id", requireAdmin, (req, res) => {
   );
 });
 
+app.get("/tos", (req, res) => {
+  res.render("tos");
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`running on ${PORT}`);
 });

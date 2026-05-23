@@ -1,45 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>yanderes.online</title>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/css/style.css">
-
+  <title>yanderes.online</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
 <div class="shell">
 
-<div class="site-header">
-<div>
-<h1>yanderes.online</h1>
-<p class="tag">dark yandere fiction archive</p>
-</div>
+  <div class="site-header">
+    <div>
+      <h1>yanderes.online</h1>
+      <p class="tag">dark yandere fiction archive</p>
+    </div>
 
-<nav>
-<a href="/">archive</a>
-<a href="/tos">tos</a>
-<a href="/submit">submit</a>
-<a href="/admin">admin</a>
-</nav>
-</div>
+    <nav>
+      <a href="/">archive</a>
+      <a href="/submit">submit</a>
+      <a href="/tos">tos</a>
+      <a href="/admin">admin</a>
+    </nav>
+  </div>
 
-<div class="notice">
-created by kekgirl on discord
-</div>
+  <div class="notice">
+    fictional stories only • posts stay archived unless removed by admin
+  </div>
 
-<div class="posts">
-<% posts.forEach(post => { %>
+  <div class="posts">
+    <% if (!posts.length) { %>
+      <div class="panel">no posts yet.</div>
+    <% } %>
 
-<div class="post <%= post.pinned ? 'pinned' : '' %>">
-<h2><a href="/post/<%= post.id %>"><%= post.title %></a></h2>
-<p class="tag"><%= post.tag %></p>
-</div>
+    <% posts.forEach(post => { %>
+      <div class="post <%= post.pinned ? 'pinned' : '' %>">
+        <h2>
+          <a href="/post/<%= post.id %>"><%= post.title %></a>
+        </h2>
 
-<% }) %>
-</div>
+        <p class="tag">
+          <%= post.tag %>
+          <% if (post.pinned) { %>
+            • pinned
+          <% } %>
+        </p>
+      </div>
+    <% }) %>
+  </div>
 
 </div>
 

@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>submit</title>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/css/style.css">
-
+  <title>submit</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
 <div class="shell">
 
-<div class="site-header">
-<h1>submit entry</h1>
-</div>
+  <div class="site-header">
+    <div>
+      <h1>submit entry</h1>
+      <p class="tag">add a fictional archive entry</p>
+    </div>
 
-<form method="POST">
+    <nav>
+      <a href="/">archive</a>
+      <a href="/tos">tos</a>
+      <a href="/admin">admin</a>
+    </nav>
+  </div>
 
-<% if (error) { %>
-<div class="panel"><%= error %></div>
-<% } %>
+  <form method="POST">
+    <% if (error) { %>
+      <div class="panel"><%= error %></div>
+    <% } %>
 
-<input name="title" placeholder="title">
-<input name="tag" placeholder="tag">
-<textarea name="content" placeholder="story"></textarea>
+    <input name="title" placeholder="title">
+    <input name="tag" placeholder="tag">
+    <textarea name="content" placeholder="story"></textarea>
 
-<button type="submit">submit</button>
-
-</form>
+    <button type="submit">submit</button>
+  </form>
 
 </div>
 

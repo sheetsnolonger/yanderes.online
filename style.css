@@ -1,10 +1,23 @@
- body {
+  body {
     background-color: black;
     color: red;
+    /* Centers text across the entire page */
+    text-align: center; 
   }
 
-  /* Styles the table structure, borders, and padding */
-  table, th, td {
-    border: 1px solid red; /* Changed border to red to match the theme */
+  table {
+    /* Centers the table horizontally on the page */
+    margin: 20px auto; 
+    width: 80px; /* Reduced width so centering is visible */
     border-collapse: collapse;
+  }
+
+  table, th, td {
+    border: 1px solid red;
+  }
+
+  th, td {
+    padding: 10px;
+    /* Centers text inside the table cells */
+    text-align: center; 
   }

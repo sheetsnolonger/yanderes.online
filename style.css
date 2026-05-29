@@ -1,0 +1,10 @@
+ body {
+    background-color: black;
+    color: red;
+  }
+
+  /* Styles the table structure, borders, and padding */
+  table, th, td {
+    border: 1px solid red; /* Changed border to red to match the theme */
+    border-collapse: collapse;
+  }

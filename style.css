@@ -2,8 +2,10 @@
     background-color: black;
     color: red;
     /* Centers text across the entire page */
-    text-align: center; 
-  }
+  .container {
+    text-align: center;
+}
+
 
   table {
     /* Centers the table horizontally on the page */

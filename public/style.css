@@ -1,10 +1,8 @@
-  body {
+body {
     background-color: black;
     color: red;
     margin: 0;
     padding: 0;
-    transform: scaleX(1.15);
-    transform-origin: center top;
 }
 
 .container {
@@ -28,6 +26,10 @@ th, td {
     text-align: center;
 }
 
-h1, h2, h3, p {
+/* old-web stretched text effect */
+h1, h2, h3, p, a, span, div {
+    display: inline-block;
+    transform: scaleX(1.12);
+    transform-origin: center;
     letter-spacing: 1px;
 }

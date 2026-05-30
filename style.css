@@ -10,7 +10,7 @@
   table {
     /* Centers the table horizontally on the page */
     margin: 20px auto; 
-    width: 80px; /* Reduced width so centering is visible */
+    width: 100px; /* Reduced width so centering is visible */
     border-collapse: collapse;
   }
 
